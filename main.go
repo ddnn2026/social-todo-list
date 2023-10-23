@@ -3,9 +3,13 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
 	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
+// 1
 type TodoItem struct {
 	Id          int        `json:"id"`
 	Title       string     `json:"title"`
@@ -35,4 +39,12 @@ func main() {
 	}
 
 	fmt.Println(string(jsonData))
+
+	r := gin.Default()
+	r.GET("/ping", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{
+			"message": "pong",
+		})
+	})
+	r.Run(":8088")
 }

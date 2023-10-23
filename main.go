@@ -3,13 +3,15 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
 )
 
-// 1
 type TodoItem struct {
 	Id          int        `json:"id"`
 	Title       string     `json:"title"`
@@ -20,7 +22,13 @@ type TodoItem struct {
 }
 
 func main() {
-	fmt.Println("first")
+	dsn := "root:mypass@tcp(127.0.0.1:3306)/mydb?charset=utf8mb4&parseTime=True&loc=Local"
+	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(db)
+
 	now1 := time.Now().UTC()
 
 	item := TodoItem{
@@ -43,7 +51,7 @@ func main() {
 	r := gin.Default()
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
-			"message": "pong",
+			"message": item,
 		})
 	})
 	r.Run(":8088")
